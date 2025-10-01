@@ -1,78 +1,82 @@
-// Navbar Active Link & Smooth Scroll
-const navLinks = document.querySelectorAll('.nav-link');
-const sections = document.querySelectorAll('main section');
-const navbar = document.querySelector('.navbar');
-const navToggle = document.querySelector('.nav-toggle');
-const navLinksContainer = document.querySelector('.nav-links');
+document.addEventListener('DOMContentLoaded', () => {
+    const hamburger = document.querySelector('.hamburger');
+    const navMenu = document.querySelector('.nav-menu');
 
-// Toggle Hamburger Menu (Mobile)
-navToggle.addEventListener('click', () => {
-  navLinksContainer.classList.toggle('open');
-});
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
 
-// Close menu on link click (mobile)
-navLinks.forEach(link => {
-  link.addEventListener('click', () => {
-    navLinksContainer.classList.remove('open');
-  });
-});
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        });
+    });
 
-// Active link on scroll
-window.addEventListener('scroll', () => {
-  let current = '';
-  sections.forEach(section => {
-    const sectionTop = section.offsetTop - navbar.offsetHeight - 10;
-    if (window.scrollY >= sectionTop) {
-      current = section.getAttribute('id');
+    const sections = document.querySelectorAll('main section');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const header = document.querySelector('.header');
+
+    window.addEventListener('scroll', () => {
+        let current = 'home';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - header.offsetHeight - 50;
+            if (window.scrollY >= sectionTop) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        if ((window.innerHeight + Math.ceil(window.scrollY)) >= document.body.offsetHeight) {
+            const lastSection = sections[sections.length - 1];
+            if (lastSection) {
+                current = lastSection.getAttribute('id');
+            }
+        }
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.add('active');
+            }
+        });
+    });
+
+    const revealSections = () => {
+        const sectionsToReveal = document.querySelectorAll('.content-section');
+        sectionsToReveal.forEach(section => {
+            if (section.getBoundingClientRect().top < window.innerHeight - 100) {
+                section.classList.add('visible');
+            }
+        });
+    };
+    window.addEventListener('scroll', revealSections);
+    revealSections();
+
+    const contactForm = document.querySelector('.contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            const email = contactForm.querySelector('input[name="email"]');
+            const name = contactForm.querySelector('input[name="nama"]');
+            const subject = contactForm.querySelector('input[name="subjek"]');
+            const message = contactForm.querySelector('textarea[name="pesan"]');
+            let isValid = true;
+            if (!name.value.trim() || !email.value.match(/^\S+@\S+\.\S+$/) || !subject.value.trim() || !message.value.trim()) {
+                isValid = false;
+            }
+            if (!isValid) {
+                e.preventDefault();
+                alert('Harap isi semua kolom dengan benar!');
+            }
+        });
     }
-  });
-  navLinks.forEach(link => {
-    link.classList.remove('active');
-    if (link.getAttribute('href') === '#' + current) {
-      link.classList.add('active');
-    }
-  });
-});
 
-// Fade-in Animation on Scroll
-function revealSections() {
-  sections.forEach(section => {
-    const rect = section.getBoundingClientRect();
-    if (rect.top < window.innerHeight - 80) {
-      section.classList.add('visible');
-    }
-  });
-}
-window.addEventListener('scroll', revealSections);
-window.addEventListener('DOMContentLoaded', revealSections);
-
-// Contact Form Validation (Basic)
-const contactForm = document.querySelector('.contact-form');
-if (contactForm) {
-  contactForm.addEventListener('submit', function(e) {
-    const email = contactForm.querySelector('input[name="email"]');
-    const nama = contactForm.querySelector('input[name="nama"]');
-    const subjek = contactForm.querySelector('input[name="subjek"]');
-    const pesan = contactForm.querySelector('textarea[name="pesan"]');
-    let valid = true;
-    if (!nama.value.trim()) valid = false;
-    if (!email.value.match(/^\S+@\S+\.\S+$/)) valid = false;
-    if (!subjek.value.trim()) valid = false;
-    if (!pesan.value.trim()) valid = false;
-    if (!valid) {
-      e.preventDefault();
-      alert('Mohon isi semua field dengan benar!');
-    }
-  });
-}
-
-// Progress Bar Animation
-window.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.skill-bar span').forEach(bar => {
-    const width = bar.style.width;
-    bar.style.width = '0';
-    setTimeout(() => {
-      bar.style.width = width;
-    }, 400);
-  });
+    const scrollToTopBtn = document.querySelector('.scroll-to-top');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            scrollToTopBtn.classList.add('visible');
+        } else {
+            scrollToTopBtn.classList.remove('visible');
+        }
+    });
 });
